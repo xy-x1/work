@@ -1,0 +1,349 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <style>
+      table {
+        width: 100%;
+        border-collapse: collapse;
+        margin-top: 15px;
+      }
+
+      table,
+      th,
+      td {
+        border: 1px solid #03a4fb;
+        background-color: #edf2f5;
+      }
+
+      th,
+      td {
+        padding: 8px;
+        text-align: left;
+      }
+
+      th {
+        background-color: #2486b9;
+        color: white;
+      }
+
+      tr:nth-child(even) {
+        background-color: #f2f2f2;
+      }
+      #overlay {
+        display: none;
+        position: fixed;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        background: rgba(0, 0, 0, 0.5);
+      }
+
+      #modal {
+        background: white;
+        max-width: 400px;
+        height: 300px;
+        margin: 180px auto;
+        padding: 20px;
+        border-radius: 5px;
+        box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+        text-align: center;
+      }
+
+      #closeBtn {
+        cursor: pointer;
+        font-size: 18px;
+        color: #888;
+      }
+      #modal input {
+        margin-top: 10px;
+      }
+      #modal button {
+        margin-top: 25px;
+        margin-right: 45px;
+        margin-left: 85px;
+      }
+      #box1 {
+        width: 200px;
+        height: 100px;
+        background-color: aqua;
+      }
+      #box {
+        width: 95%;
+        margin: auto;
+        margin-top: 50px;
+      }
+      button {
+        width: 60px;
+        height: 22px;
+        color: white;
+        background-color: #2486b9;
+        border: none;
+        border-radius: 3px;
+      }
+      #btnbox {
+        margin-top: 10px;
+      }
+    </style>
+  </head>
+  <body>
+    <div id="box">
+      搜索：<input type="text" id="searchtext" />&emsp;<button id="search">
+        搜索
+      </button>
+      &emsp; 歌名：<input type="text" name="Mysing" />&emsp; 歌手：<input
+        type="text"
+        name="Myname"
+      />&emsp; 专辑：<input type="text" name="Myzj" />&emsp; 年份：<input
+        type="text"
+        name="Myyear"
+      />&emsp; 类型：<input type="text" name="Mytypes" />
+      &emsp;
+      <button id="addbtn">添加</button>
+      <table>
+        <thead>
+          <tr>
+            <th>ID</th>
+            <th>歌名</th>
+            <th>歌手</th>
+            <th>专辑</th>
+            <th>年份</th>
+            <th>类型</th>
+            <th>时长</th>
+            <th>发行时间</th>
+            <th>更新时间</th>
+            <th>操作</th>
+          </tr>
+        </thead>
+        <tbody></tbody>
+      </table>
+      <div id="btnbox">
+        <button id="befor">上一页</button><button id="next">下一页</button>
+      </div>
+    </div>
+    <div id="overlay">
+      <div id="modal">
+        <h2>修改--<b id="b"></b></h2>
+        歌曲名称：<input type="text" name="Title" /><br />&emsp;&emsp;
+        歌手：<input type="text" name="singer" /><br />&emsp;&emsp; 专辑：<input
+          type="text"
+          name="album"
+        /><br />&emsp;&emsp; 年份：<input
+          type="text"
+          name="year"
+        /><br />&emsp;&emsp; 类型：<input type="text" name="types" /><br />
+        <button>保存</button><button>取消</button>
+      </div>
+    </div>
+  </body>
+  <script>
+    let b = document.getElementById("b");
+    let tbody = document.querySelector("tbody");
+    let addbtn = document.querySelector("#addbtn");
+    let hiddbox = document.querySelector("#overlay");
+    let befor = document.querySelector("#befor");
+    let next = document.querySelector("#next");
+    let srarch = document.querySelector("#search");
+    let searchtext = document.querySelector("#searchtext");
+    let btnbox = document.querySelector("#btnbox");
+    let index;
+    let page = 1,
+      pageSize = 5;
+    window.onload = function () {
+      renderlist();
+      addbtn.addEventListener("click", addFun);
+      tbody.addEventListener("click", tbodyFun);
+      hiddbox.addEventListener("click", bianjiFan);
+      srarch.addEventListener("click", searchFun);
+      searchtext.addEventListener("input", textFun);
+      btnbox.addEventListener("click", btnboxFun);
+    };
+
+    function textFun() {
+      if (searchtext.value == "") {
+        renderlist();
+      }
+    }
+
+    function btnboxFun(arr1) {
+      if (event.target.tagName == "BUTTON") {
+        diaoyong(arr1);
+        console.log(arr1);
+        switch (event.target.innerHTML) {
+          case "上一页":
+            page--;
+            page = page == 0 ? 1 : page;
+            break;
+          case "下一页":
+            page++;
+            break;
+        }
+        renderlist();
+      }
+    }
+    function searchFun() {
+      let id = document.getElementById("searchtext").value;
+      let xhr = new XMLHttpRequest();
+      xhr.open("get", `http://mp3.zzgoodqc.cn/api/songs/${id}`);
+      xhr.send();
+      xhr.onload = function () {
+        let text = JSON.parse(xhr.responseText);
+        console.log(text);
+        text.data.forEach(function (item) {
+          let html = `
+              <tr>
+              <td>${item.id}</td>
+              <td>${item.title}</td>
+              <td>${item.artist}</td>
+              <td>${item.album}</td>
+              <td>${item.year}</td>
+              <td>${item.genre}</td>
+            </tr>
+              `;
+          tbody.innerHTML = html;
+        });
+      };
+    }
+    //编辑
+    function bianjiFan() {
+      if (
+        event.target.tagName == "BUTTON" &&
+        event.target.innerHTML == "取消"
+      ) {
+        hiddbox.style.display = "none";
+      }
+      if (
+        event.target.tagName == "BUTTON" &&
+        event.target.innerHTML == "保存"
+      ) {
+        let sing = document.querySelector("input[name='Title']").value;
+        let name = document.querySelector("input[name='singer']").value;
+        let zj = document.querySelector("input[name='album']").value;
+        let year = document.querySelector("input[name='year']").value;
+        let types = document.querySelector("input[name='types']").value;
+        console.log(types);
+        let id = b.innerHTML;
+        console.log(id);
+        let xhr = new XMLHttpRequest();
+        xhr.open("put", "https://mp3.zzgoodqc.cn/api/songs/" + id);
+        let data1 = {
+          title: sing,
+          artist: name,
+          album: zj,
+          year: year,
+          genre: types,
+        };
+        console.log(data1);
+        xhr.setRequestHeader("content-Type", "application/json");
+        xhr.send(JSON.stringify(data1));
+        xhr.onload = function () {
+          renderlist();
+          hiddbox.style.display = "none";
+        };
+      }
+    }
+    //添加
+    function addFun() {
+      let sing = document.querySelector("input[name='Mysing']").value;
+      let name = document.querySelector("input[name='Myname']").value;
+      let zj = document.querySelector("input[name='Myzj']").value;
+      let year = document.querySelector("input[name='Myyear']").value;
+      let types = document.querySelector("input[name='Mytypes']").value;
+      let xhr = new XMLHttpRequest();
+      xhr.open("post", "https://mp3.zzgoodqc.cn/api/songs");
+      let data1 = {
+        title: sing,
+        artist: name,
+        album: zj,
+        year: year,
+        genre: types,
+      };
+      console.log(data1);
+      xhr.setRequestHeader("content-Type", "application/json");
+      xhr.send(JSON.stringify(data1));
+      xhr.onload = function () {
+        let add = JSON.parse(xhr.responseText).data;
+        // console.log(add);
+        renderlist();
+        document.querySelector("input[name='Mysing']").value = "";
+        document.querySelector("input[name='Myname']").value = "";
+        document.querySelector("input[name='Myzj']").value = "";
+        document.querySelector("input[name='Myyear']").value = "";
+        document.querySelector("input[name='Mytypes']").value = "";
+      };
+    }
+
+    //删除编辑
+    function tbodyFun() {
+      let btn = event.target;
+      index = event.target.dataset.index;
+      if (btn.tagName == "BUTTON" && btn.innerHTML == "删除") {
+        let xhr = new XMLHttpRequest();
+        let ID = event.target.dataset.id;
+        console.log(ID);
+        xhr.open("delete", `https://mp3.zzgoodqc.cn/api/songs?id=${ID}`);
+        xhr.send();
+        xhr.onload = function () {
+          renderlist();
+        };
+      }
+      if (btn.tagName == "BUTTON" && btn.innerHTML == "编辑") {
+        hiddbox.style.display = "block";
+        let id = event.target.dataset.id;
+        console.log(id);
+        let xhr = new XMLHttpRequest();
+        xhr.open("get", "https://mp3.zzgoodqc.cn/api/songs/" + id);
+        xhr.send();
+        xhr.onload = function () {
+          let arr = JSON.parse(xhr.responseText).data;
+          b.innerHTML = arr[0].id;
+          document.querySelector("input[name='Title']").value = arr[0].title;
+          document.querySelector("input[name='singer']").value = arr[0].artist;
+          document.querySelector("input[name='album']").value = arr[0].album;
+          document.querySelector("input[name='year']").value = arr[0].year;
+          document.querySelector("input[name='types']").value = arr[0].genre;
+        };
+      }
+    }
+    //渲染
+    function renderlist() {
+      let xhr = new XMLHttpRequest();
+      let html = "";
+      xhr.open(
+        "get",
+        `https://mp3.zzgoodqc.cn/api/songs?page=${page}&pageSize=${pageSize}`
+      );
+      xhr.send();
+      xhr.onload = function () {
+        let arr1 = JSON.parse(xhr.responseText).count;
+        let arr = JSON.parse(xhr.responseText);
+        arr.data.forEach((item, index) => {
+          html += `  <tr>
+                    <td datas-index=${index}>${item.id}</td>
+                    <td>${item.title}</td>
+                    <td>${item.artist}</td>
+                    <td>${item.album}</td>
+                    <td>${item.year}</td>
+                    <td>${item.genre}</td>
+                    <td>${item.length}</td>
+                    <td>${item.created_at}</td>
+                    <td>${item.updated_at}</td>
+                    <td><button data-id=${item.id}>删除</button>&emsp;<button data-id=${item.id}>编辑</button></td>
+            </tr>`;
+        });
+        tbody.innerHTML = html;
+      };
+    }
+    function diaoyong(arr1) {
+      let xhr = new XMLHttpRequest();
+      xhr.open(
+        "get",
+        `https://mp3.zzgoodqc.cn/api/songs?page=${page}&pageSize=${pageSize}`
+      );
+      xhr.send();
+      xhr.onload = function () {
+        let arr1 = JSON.parse(xhr.responseText).count;
+      };
+    }
+  </script>
+</html>

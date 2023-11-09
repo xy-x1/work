@@ -1,0 +1,261 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Document</title>
+    <style>
+      html {
+        background-color: black;
+      }
+      * {
+        padding: 0;
+        margin: 0;
+      }
+      li {
+        list-style: none;
+      }
+      #box {
+        width: 1200px;
+        height: 800px;
+        margin: auto;
+        background-color: black;
+      }
+      #left {
+        width: 200px;
+        height: 600px;
+        background-color: white;
+        margin: 100px 0 0 100px;
+        float: left;
+      }
+      #right {
+        width: 780px;
+        height: 600px;
+        background-color: white;
+        float: right;
+        margin: 100px 100px 0 0;
+        overflow: hidden;
+      }
+      #left li {
+        height: 80px;
+        line-height: 80px;
+        text-align: center;
+      }
+      img {
+        width: 240px;
+        height: 240px;
+        margin: 20px 12px 0 8px;
+      }
+      #right li {
+        float: left;
+      }
+      p {
+        width: 240px;
+        height: 30px;
+        margin: -5px 8px 5px 8px;
+        text-align: center;
+        line-height: 30px;
+      }
+      #zou p {
+        width: 100%;
+        height: 40px;
+        margin: 0;
+        background-color: white;
+        color: rgb(48, 129, 255);
+        line-height: 40px;
+      }
+      h2 {
+        width: 100%;
+        height: 80px;
+        text-align: center;
+        line-height: 80px;
+        background-color: rgb(48, 129, 255);
+        color: white;
+      }
+      .active {
+        background-color: rgb(48, 129, 255);
+        color: white;
+      }
+    </style>
+  </head>
+  <body>
+    <div id="box">
+      <div id="left">
+        <h2>-这是标题-</h2>
+        <ul id="zou"></ul>
+      </div>
+      <!--  -->
+      <div id="right">
+        <ul id="you">
+          <li>
+            <img
+              src="https://pic1.zhimg.com/80/v2-989effdfb49c44c1789165f1d3af2564_1440w.webp"
+            />
+            <p>1</p>
+          </li>
+          <li>
+            <img
+              src="https://pic3.zhimg.com/80/v2-052d7735f03bb6c7f7731c66d42d8072_1440w.webp"
+            />
+            <p>2</p>
+          </li>
+          <li>
+            <img
+              src="https://pic2.zhimg.com/80/v2-277e3f01e00ca22a30d764a75d4f1c45_1440w.webp"
+            />
+            <p>3</p>
+          </li>
+          <li>
+            <img
+              src="https://pic1.zhimg.com/80/v2-989effdfb49c44c1789165f1d3af2564_1440w.webp"
+            />
+            <p>4</p>
+          </li>
+          <li>
+            <img
+              src="https://pic2.zhimg.com/80/v2-ac5d5295d273e0d34ee96cc229178dc1_1440w.webp"
+            />
+            <p>5</p>
+          </li>
+          <li>
+            <img
+              src="https://pic2.zhimg.com/80/v2-277e3f01e00ca22a30d764a75d4f1c45_1440w.webp"
+            />
+            <p>6</p>
+          </li>
+        </ul>
+      </div>
+    </div>
+    <script src="/扩展文件/jquery-3.7.1.js"></script>
+    <script>
+      let right = [
+        {
+          title: "大众系列",
+          children: [
+            {
+              name: "大众1111",
+              img: "https://pic2.zhimg.com/80/v2-277e3f01e00ca22a30d764a75d4f1c45_1440w.webp",
+            },
+            {
+              name: "大众2222",
+              img: "https://pic3.zhimg.com/80/v2-052d7735f03bb6c7f7731c66d42d8072_1440w.webp",
+            },
+            {
+              name: "大众3333",
+              img: "https://pic1.zhimg.com/80/v2-c715ba318062d96f32f943792b3fb828_1440w.webp",
+            },
+            {
+              name: "大众4444",
+              img: "https://pic1.zhimg.com/80/v2-a375b0629ceba27729d827065cf2bbb0_1440w.webp",
+            },
+            {
+              name: "大众5555",
+              img: "https://pic1.zhimg.com/80/v2-3574642a67dfe3544c2314336d2218d4_1440w.webp",
+            },
+            {
+              name: "大众6666",
+              img: "https://pic1.zhimg.com/80/v2-93169e9f8b5c5e1578df5decaca3072c_1440w.webp",
+            },
+          ],
+        },
+        {
+          title: "五菱系列",
+          children: [
+            {
+              name: "五菱1111",
+              img: "https://pic4.zhimg.com/80/v2-676c7c86f9c23a904a2831e42e31da73_1440w.webp",
+            },
+            {
+              name: "五菱2222",
+              img: "https://pic2.zhimg.com/80/v2-92601ce43c1c6d409c48a1b0f5ecfcb5_1440w.webp",
+            },
+            {
+              name: "五菱3333",
+              img: "https://pic1.zhimg.com/80/v2-686547afe88279e4dbaf4cfa6790b7c0_1440w.webp",
+            },
+            {
+              name: "五菱4444",
+              img: "https://pic4.zhimg.com/80/v2-e4a91c78461dcd8e4ab1188f430e14d7_1440w.webp",
+            },
+            {
+              name: "五菱5555",
+              img: "https://pic1.zhimg.com/80/v2-5cf650a4d827fb8868a4acf5d243891c_1440w.webp",
+            },
+            {
+              name: "五菱6666",
+              img: "https://pic4.zhimg.com/80/v2-df21c0a747ecda00cec7c1638018dc23_1440w.webp",
+            },
+          ],
+        },
+        {
+          title: "路虎系列",
+          children: [
+            {
+              name: "路虎1111",
+              img: "https://pic4.zhimg.com/80/v2-593e236f72d881639afedb431d7c50d3_1440w.webp",
+            },
+            {
+              name: "路虎2222",
+              img: "https://pic1.zhimg.com/80/v2-13fc4e8ac09ff64bd0f7df5c9f3627c0_1440w.webp",
+            },
+            {
+              name: "路虎3333",
+              img: "https://pic4.zhimg.com/80/v2-9e85011543d696ad314f19cb93b47903_1440w.webp",
+            },
+            {
+              name: "路虎4444",
+              img: "https://pic1.zhimg.com/80/v2-a375b0629ceba27729d827065cf2bbb0_1440w.webp",
+            },
+            {
+              name: "路虎5555",
+              img: "https://pic2.zhimg.com/80/v2-7bef6a9ae92dc42e37d89aaa7d751025_1440w.webp",
+            },
+            {
+              name: "路虎6666",
+              img: "https://pic2.zhimg.com/80/v2-d416d93c560b65eb65ffcd90da78d98d_1440w.webp",
+            },
+          ],
+        },
+      ];
+
+      $(function () {
+        renderlist();
+        renderrightlist(0);
+        $("#zou li").on("mouseenter", function () {
+          if ($(this).hasClass("ad")) return;
+          let index = $(this).index();
+          $("#zou li").removeClass("active");
+          $("#zou li").eq(index).addClass("active");
+          renderrightlist(index);
+        });
+      });
+
+      //渲染右
+      function renderrightlist(index) {
+        let data = right[index].children;
+        let html = "";
+        data.forEach((item, index) => {
+          html += `<li class="photo">
+                       <img src="${item.img}" />
+                       <p>${item.name}</p>
+                   </li>`;
+        });
+        $("#you").html(html);
+      }
+
+      //
+      function renderlist() {
+        html = "";
+        right.forEach((item, index) => {
+          html += `<li>${item.title}</li>`;
+        });
+        html += `<li class="ad">
+                  <p>全国服务咨询热线</p>
+                  <p>800-8686868</p>
+                </li>`;
+        $("#zou").html(html);
+        $("#zou li:first").addClass("active");
+      }
+    </script>
+  </body>
+</html>

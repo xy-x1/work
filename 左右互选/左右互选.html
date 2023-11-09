@@ -1,0 +1,210 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Document</title>
+    <script src="../jquery-3.7.1.js"></script>
+  </head>
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+    }
+    ul {
+      list-style: none;
+    }
+    #box {
+      width: 750px;
+      height: 600px;
+      margin: 50px auto;
+    }
+    #left,
+    #right {
+      width: 250px;
+      min-height: 500px;
+      border: 2px solid black;
+      float: left;
+    }
+    #right {
+      float: right;
+    }
+    #hright,
+    #lright {
+      width: 60px;
+      height: 30px;
+      margin: 200px 0 0 30px;
+    }
+    #Name {
+      width: 100%;
+      height: 60px;
+      line-height: 50px;
+      text-align: center;
+      background-color: rgb(243, 113, 135);
+    }
+    li {
+      height: 35px;
+      list-style: none;
+      font-size: 18px;
+      line-height: 35px;
+      padding-left: 40px;
+    }
+    #add,
+    #add1 {
+      width: 99%;
+      height: 40px;
+      text-align: center;
+    }
+    #leftbtn1,
+    #rightbtn1 {
+      height: 30px;
+    }
+  </style>
+
+  <body>
+    <div id="box">
+      <div id="left">
+        <input type="text" placeholder="请输入水果名称" id="add" />
+        <div id="Name"><input type="checkbox" id="left-all" />水果</div>
+        <ul id="ul1"></ul>
+      </div>
+      <button id="hright">←</button>
+      <button id="lright">→</button>
+      <div id="right">
+        <input type="text" placeholder="请输入蔬菜名称" id="add1" />
+        <div id="Name"><input type="checkbox" id="right-all" />蔬菜</div>
+        <ul id="ul2"></ul>
+      </div>
+    </div>
+    <script>
+      let left = [
+        {
+          name: "草莓",
+          status: false,
+        },
+        {
+          name: "石榴",
+          status: false,
+        },
+        {
+          name: "西瓜",
+          status: false,
+        },
+      ];
+      let right = [
+        {
+          name: "土豆",
+          status: false,
+        },
+        {
+          name: "茄子",
+          status: false,
+        },
+        {
+          name: "莲藕",
+          status: false,
+        },
+      ];
+      $(function () {
+        leftfun();
+        rightfun();
+        $("#add1").on("keydown", add1fun);
+        $("#add").on("keydown", add2fun);
+        $("#hright").on("click", lefttolefun);
+        $("#lright").on("click", righttolefun);
+        $("#ul2").on("click", rightlistfun);
+        $("#ul1").on("click", leftlistfun);
+        $("#right-all").on("click", rightAllfun);
+        $("#left-all").on("click", leftAllfun);
+      });
+      function add1fun() {
+        let text = $("#add1").val();
+        if (event.key == "Enter") {
+          let obj = {
+            name: text,
+            status: false,
+          };
+          right.push(obj);
+          $("#add1").val("");
+          rightfun();
+        }
+      }
+      function add2fun() {
+        let text = $("#add").val();
+        if (event.key == "Enter") {
+          let obj = {
+            name: text,
+            status: false,
+          };
+          left.push(obj);
+          $("#add").val("");
+          leftfun();
+        }
+      }
+      function lefttolefun() {
+        var tmpright = right.filter((item) => item.status);
+        right = right.filter((item) => !item.status);
+        left = left.concat(tmpright);
+        leftfun();
+        rightfun();
+      }
+      function righttolefun() {
+        var tmpleft = left.filter((item) => item.status);
+        left = left.filter((item) => !item.status);
+        right = right.concat(tmpleft);
+        leftfun();
+        rightfun();
+      }
+      function rightlistfun() {
+        if (event.target.tagName == "INPUT") {
+          var index = event.target.dataset.index;
+          right[index].status = event.target.checked;
+          rightlistAllfun();
+        }
+      }
+      function rightlistAllfun() {
+        rightAll.checked = right.every((item) => item.status);
+      }
+      function rightAllfun() {
+        right.forEach((item) => {
+          item.status = this.checked;
+        });
+        rightfun();
+      }
+      function leftlistfun() {
+        if (event.target.tagName == "INPUT") {
+          var index = event.target.dataset.index;
+          left[index].status = event.target.checked;
+          leftlistAllfun();
+        }
+      }
+      function leftlistAllfun() {
+        leftAll.checked = left.every((item) => item.status);
+      }
+      function leftAllfun() {
+        left.forEach((item) => {
+          item.status = this.checked;
+        });
+        leftfun();
+      }
+      function leftfun() {
+        var html = "";
+        left.forEach((litem, index) => {
+          html += ` <li><input type="checkbox"${
+            litem.status ? "checked" : ""
+          } data-index='${index}'/>${litem.name}</li>`;
+        });
+        $("#ul1").html(html);
+      }
+      function rightfun() {
+        var html = "";
+        right.forEach((ritem, index) => {
+          html += ` <li><input type="checkbox"${
+            ritem.status ? "checked" : ""
+          } data-index='${index}'/>${ritem.name}</li>`;
+        });
+        $("#ul2").html(html);
+      }
+    </script>
+  </body>
+</html>

@@ -1,0 +1,285 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>增删改查</title>
+    <style>
+      * {
+        margin: 0;
+        padding: 0;
+      }
+      .wrap {
+        width: 1000px;
+        margin: auto;
+      }
+      #box {
+        width: 700px;
+        margin: 100px auto;
+      }
+      table {
+        border-collapse: collapse;
+        width: 700px;
+        text-align: center;
+        border: 1px solid black;
+      }
+      th,
+      td {
+        height: 40px;
+        background-color: palevioletred;
+      }
+      th {
+        background-color: rgb(211, 69, 117);
+        color: wheat;
+      }
+      button {
+        width: 50px;
+        height: 30px;
+        border: none;
+        background-color: rgb(239, 150, 181);
+        border-radius: 5px;
+        color: rgb(251, 228, 182);
+      }
+      /* 111111111111 */
+      #addbox {
+        width: 300px;
+        height: 350px;
+        background-color: rgb(211, 69, 117);
+        text-align: center;
+        overflow: hidden;
+        position: relative;
+        top: -400px;
+        left: 360px;
+        display: none;
+      }
+      h3 {
+        margin: 30px 0;
+      }
+      /*  */
+      #editbox {
+        width: 300px;
+        height: 350px;
+        background-color: rgb(211, 69, 117);
+        text-align: center;
+        overflow: hidden;
+        position: relative;
+        top: -400px;
+        left: 360px;
+        display: none;
+      }
+    </style>
+  </head>
+  <body>
+    <div class="wrap">
+      <div id="box">
+        <table border="1">
+          <thead>
+            <tr>
+              <th>ID</th>
+              <th>姓名</th>
+              <th>身高</th>
+              <th>年龄</th>
+              <th>性别</th>
+              <th>出生年月</th>
+              <th>操作</th>
+            </tr>
+            <input type="text" placeholder="搜索" id="search" />&emsp;
+            <button id="sear">搜索</button
+            >&emsp;
+            <button id="addbtn">添加</button
+            ><br /><br />
+          </thead>
+          <tbody></tbody>
+        </table>
+      </div>
+
+      <div id="addbox">
+        <h3>添加</h3>
+        姓名：<input type="text" id="name" /><br /><br />
+        身高：<input type="text" id="height" /><br /><br />
+        年龄：<input type="text" id="age" /><br /><br />
+        性别：<input type="text" id="sex" /><br /><br />
+        出生年月：<input type="text" id="birthday" /><br /><br />
+        <button id="voidbtn">取消</button>&emsp;
+        <button id="tagbtn">添加</button>
+      </div>
+      <!--  -->
+      <div id="editbox">
+        <h3>修改</h3>
+        姓名：<input type="text" id="name1" /><br /><br />
+        身高：<input type="text" id="height1" /><br /><br />
+        年龄：<input type="text" id="age1" /><br /><br />
+        性别：<input type="text" id="sex1" /><br /><br />
+        出生年月：<input type="text" id="birthday1" /><br /><br />
+        <button id="voidbtn">取消</button>&emsp;
+        <button id="tagbtn1">保存</button>
+      </div>
+    </div>
+    <script src="/扩展文件/jquery-3.7.1.js"></script>
+    <script>
+      var index;
+      let user = [
+        {
+          id: 1,
+          name: "熙熙",
+          height: 160,
+          age: 18,
+          sex: "女",
+          birthday: 2005.0109,
+        },
+        {
+          id: 2,
+          name: "阳阳",
+          height: 170,
+          age: 19,
+          sex: "男",
+          birthday: 2004.0526,
+        },
+        {
+          id: 3,
+          name: "琼琼",
+          height: 162,
+          age: 18,
+          sex: "女",
+          birthday: 2005.0503,
+        },
+        {
+          id: 4,
+          name: "雯雯",
+          height: 165,
+          age: 19,
+          sex: "女",
+          birthday: 2004.0318,
+        },
+        {
+          id: 5,
+          name: "康康",
+          height: 175,
+          age: 19,
+          sex: "男",
+          birthday: 2004.1228,
+        },
+      ];
+
+      $(function () {
+        renderlist();
+
+        //添加
+        $("#addbtn").click(addfun);
+        // 取消
+        $("#voidbtn").click(voidfun);
+        //保存添加
+        $("#tagbtn").click(tagfun);
+        //删除编辑
+        $("tbody").click(tbodyfun);
+        //修改
+        $("#editbox").click(editfun);
+      });
+
+      //搜索
+      $("#sear").click(function () {
+        renderlist();
+      });
+
+      //添加
+      function addfun() {
+        $("#addbox").css("display", "block");
+      }
+
+      //取消
+      function voidfun() {
+        $("#addbox").css("display", "none");
+      }
+
+      //保存添加
+      function tagfun() {
+        let users = {
+          id: user.length + 1,
+          name: $("#name").val(),
+          height: $("#height").val(),
+          age: $("#age").val(),
+          sex: $("#sex").val(),
+          birthday: $("#birthday").val(),
+        };
+        user.push(users);
+        $("#addbox").css("display", "none");
+        renderlist();
+      }
+
+      //删除编辑
+      function tbodyfun() {
+        // let Index = $(event.target).data("index");
+        if (
+          event.target.tagName == "BUTTON" &&
+          event.target.innerHTML == "删除"
+        ) {
+          user.splice($(event.target).data("index"), 1);
+        } else if (
+          event.target.tagName == "BUTTON" &&
+          event.target.innerHTML == "编辑"
+        ) {
+          console.log(111);
+          $("#editbox").css("display", "block");
+          index = $(event.target).data("index");
+          $("#name1").val(user[index].name);
+          $("#height1").val(user[index].height);
+          $("#age1").val(user[index].age);
+          $("#sex1").val(user[index].sex);
+          $("#birthday1").val(user[index].birthday);
+        }
+        // renderlist();
+      }
+
+      //   保存编辑;
+      function editfun() {
+        if (
+          event.target.tagName == "BUTTON" &&
+          event.target.innerHTML == "取消"
+        ) {
+          $("#editbox").css("display", "none");
+          console.log(111);
+        } else if (
+          event.target.tagName == "BUTTON" &&
+          event.target.innerHTML == "保存"
+        ) {
+          console.log(index);
+          user[index].name = $("#name1").val();
+          user[index].height = $("#height1").val();
+          user[index].age = $("#age1").val();
+          user[index].sex = $("#sex1").val();
+          user[index].birthday = $("#birthday1").val();
+          $("#editbox").css("display", "none");
+          renderlist();
+        }
+      }
+
+      //渲染
+      function renderlist() {
+        let html = "";
+        let searchStr = $("#search").val().trim();
+        console.log(searchStr);
+        user.forEach((item, index) => {
+          if (
+            searchStr === "" ||
+            item.sex.includes(searchStr) ||
+            item.name.includes(searchStr)
+          ) {
+            html += `<tr>
+                       <td>${item.id}</td>
+                       <td>${item.name}</td>
+                       <td>${item.height}</td>
+                       <td>${item.age}</td>
+                       <td>${item.sex}</td>
+                       <td>${item.birthday}</td>
+                       <td>
+                         <button  data-index=${index}  id="delebtn">删除</button>&emsp;
+                         <button  data-index=${index}  id="editbtn">编辑</button>
+                       </td>
+                    </tr>`;
+          }
+        });
+        $("tbody").html(html);
+      }
+    </script>
+  </body>
+</html>

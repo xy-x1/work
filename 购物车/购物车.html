@@ -1,0 +1,306 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>购物车</title>
+    <style>
+      * {
+        padding: 0;
+        margin: 0;
+      }
+      #box {
+        width: 1200px;
+        height: 830px;
+        background-color: rgb(255, 237, 239);
+        margin: auto;
+        overflow: hidden;
+        text-align: center;
+      }
+      #Product {
+        width: 800px;
+        margin: 50px auto;
+        border: 1px solid black;
+      }
+      #Cart {
+        width: 800px;
+        background-color: rgb(236, 199, 212);
+        margin: 50px auto;
+        border: 1px solid black;
+      }
+      table {
+        border-collapse: collapse;
+        width: 800px;
+        border: 1px solid black;
+      }
+      th {
+        height: 40px;
+        background-color: rgb(211, 69, 117);
+        color: wheat;
+      }
+      td {
+        height: 40px;
+        background-color: palevioletred;
+      }
+      button {
+        background-color: plum;
+        border: none;
+        width: 80px;
+        height: 25px;
+        border-radius: 5px;
+      }
+      #btn {
+        font-size: 18px;
+        width: 25px;
+        height: 20px;
+        background-color: rgb(245, 216, 226);
+        margin: 0 8px;
+      }
+    </style>
+  </head>
+  <body>
+    <div id="box">
+      <h2>商品列表</h2>
+      <div id="Product">
+        <table border="1">
+          <thead>
+            <tr>
+              <th>ID</th>
+              <th>商品</th>
+              <th>单价（元）</th>
+              <th>库存</th>
+              <th>操作</th>
+            </tr>
+          </thead>
+          <tbody id="tbody1"></tbody>
+        </table>
+      </div>
+      <!--  -->
+      <h2>购物车</h2>
+
+      <div id="Cart">
+        <table border="1">
+          <thead>
+            <tr>
+              <th>ID</th>
+              <th>商品</th>
+              <th>单价（元）</th>
+              <th>数量</th>
+              <th>金额</th>
+              <th>操作</th>
+            </tr>
+          </thead>
+
+          <tbody id="tbody2"></tbody>
+        </table>
+      </div>
+      <h3>总价<b>0￥</b></h3>
+    </div>
+    <script>
+      //商品列表
+      let Cart = [
+        {
+          lid: 1,
+          lname: "苹果",
+          lprice: 10,
+          lnum: 2,
+          lmoney: 10,
+        },
+      ];
+      let Product = [
+        {
+          id: 1,
+          name: "苹果",
+          price: 10,
+          stock: 10,
+        },
+        {
+          id: 2,
+          name: "红柚",
+          price: 3,
+          stock: 10,
+        },
+        {
+          id: 3,
+          name: "阳光玫瑰",
+          price: 4,
+          stock: 10,
+        },
+        {
+          id: 4,
+          name: "提子",
+          price: 3,
+          stock: 10,
+        },
+      ];
+      let body1 = document.querySelector("#tbody1");
+      let body2 = document.querySelector("#tbody2");
+      let Total = document.querySelector("b");
+      //
+      window.addEventListener("load", function () {
+        renderlist();
+        renderCartlist();
+        Totalfun();
+        body1.addEventListener("click", goodfun);
+        body2.addEventListener("click", Carttbodyfun);
+      });
+
+      //总价
+      function Totalfun() {
+        let result = Cart.reduce((sum, item) => {
+          return sum + item.lprice * item.lnum;
+        }, 0);
+        Total.innerHTML = result;
+      }
+
+      //商品
+      function goodfun() {
+        if (
+          event.target.tagName == "BUTTON" &&
+          event.target.innerHTML == "加入购物车"
+        ) {
+          addshopcar(event.target.dataset.index);
+        }
+      }
+
+      //数量加减
+      function Carttbodyfun() {
+        if (event.target.tagName == "BUTTON" && event.target.innerHTML == "+") {
+          increasefun(event.target.dataset.index);
+        } else if (
+          event.target.tagName == "BUTTON" &&
+          event.target.innerHTML == "-"
+        ) {
+          reducefun(event.target.dataset.index);
+        } else if (
+          event.target.tagName == "BUTTON" &&
+          event.target.innerHTML == "删除"
+        ) {
+          deletebtn(event.target.dataset.index);
+        }
+      }
+      //数量加
+      function increasefun(index) {
+        console.log(Cart[index]);
+        //商品是否还有库存
+        let id = Product[index].id;
+        let goodsIndex = Product.findIndex((item) => {
+          return item.id == id;
+        });
+        if (goodsIndex == -1) {
+          alert("商品已下架");
+          return;
+        } else if (Product[index].stock < 1) {
+          alert("库存不足");
+          return;
+        } else {
+          //先减再追加
+          Product[index].stock--;
+          Cart[index].lnum++;
+        }
+        renderlist();
+        renderCartlist();
+      }
+      //数量减
+      function reducefun(index) {
+        if (Cart[index].lnum < 2) {
+          alert("买一个吧");
+          return;
+        }
+        Cart[index].lnum--;
+        let id = Cart[index].id;
+        let goodsIndex = Product.findIndex((item) => {
+          return item.id == id;
+        });
+        Product[index].stock++;
+
+        renderlist();
+        renderCartlist();
+      }
+      //
+
+      //删除
+      function deletebtn(index) {
+        let num = Cart[index].lnum;
+        let id = Cart[index].lid;
+        let goodsIndex = Product.findIndex((item) => {
+          return item.id == id;
+        });
+        Product[goodsIndex].stock += num;
+        Cart.splice(index, 1);
+        renderlist();
+        renderCartlist();
+      }
+
+      //加入购物车
+      function addshopcar(index) {
+        console.log(Product[index]);
+        //判断库存
+        if (Product[index].stock < 1) {
+          alert("库存不足");
+          return;
+        }
+        //库存--
+        Product[index].stock--;
+        //判断购物车是否又该商品
+        Product[index].id == 1;
+        let shopcarIndex = Cart.findIndex((item) => {
+          return item.lid == Product[index].id;
+        });
+        if (shopcarIndex == -1) {
+          let data = {
+            lid: Product[index].id,
+            lname: Product[index].name,
+            lprice: Product[index].price,
+            lnum: 1,
+          };
+          Cart.push(data);
+        } else {
+          Cart[shopcarIndex].lnum++;
+        }
+        renderlist();
+        renderCartlist();
+      }
+
+      //渲染
+      function renderlist() {
+        let html = "";
+        Product.forEach((item, index) => {
+          html += `<tr>
+                           <td>${item.id}</td>
+                           <td>${item.name}</td>
+                           <td>${item.price}</td>
+                           <td>${item.stock}</td>
+                           <td>
+                             <button   data-index='${index}'>加入购物车</button>
+                           </td>
+                         </tr>
+                `;
+        });
+        body1.innerHTML = html;
+        Totalfun();
+      }
+
+      function renderCartlist() {
+        let html = "";
+        Cart.forEach((item, index) => {
+          html += `<tr>
+                             <td>${item.lid}</td>
+                             <td>${item.lname}</td>
+                             <td>${item.lprice}</td>
+                             <td><button  id="btn" data-index='${index}'>+</button>
+                                ${item.lnum}
+                                <button id="btn" data-index='${index}'>-</button></td>
+                             <td>${item.lnum * item.lprice}</td>
+                             <td>
+                               <button   data-index='${index}'>删除</button>
+                             </td>
+                           </tr>
+                  `;
+        });
+        body2.innerHTML = html;
+        Totalfun();
+      }
+    </script>
+  </body>
+</html>

@@ -1,0 +1,89 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>work</title>
+    <style>
+      * {
+        padding: 0;
+        margin: 0;
+      }
+
+      #box {
+        width: 600px;
+        height: 400px;
+        background-color: pink;
+        background-image: url("https://pic4.zhimg.com/80/v2-676c7c86f9c23a904a2831e42e31da73_1440w.webp");
+        margin: auto;
+        overflow: hidden;
+        margin-top: 100px;
+      }
+      ul {
+        margin: auto;
+        width: 600px;
+      }
+      li {
+        list-style: none;
+        height: 100px;
+        border: 1px solid black;
+        line-height: 100px;
+        width: 600px;
+        text-align: center;
+      }
+      li:hover {
+        background-color: rgba(122, 121, 121, 0.5);
+      }
+    </style>
+  </head>
+  <body>
+    <div id="box">
+      <ul>
+        <li>
+          <a href="./左右互选/左右互选.html"></a>
+        </li>
+      </ul>
+    </div>
+    <script src="./jquery-3.7.1.js"></script>
+    <script>
+      let work = [
+        {
+          link: "./左右互选/左右互选.html",
+          tltie: "左右互选",
+        },
+        {
+          link: "./购物车/购物车.html",
+          tltie: "购物车",
+        },
+        {
+          link: "./tab/tab切换.html",
+          tltie: "tab切换",
+        },
+        {
+          link: "./增删改查/增删改查.html",
+          tltie: "增删改查",
+        },
+      ];
+
+      $(function () {
+        renderlist();
+      });
+
+      function renderlist() {
+        let html = "";
+        work.forEach((item) => {
+          html += ` <li><a href="${item.link}">${
+            item.tltie
+          }==${getDate()}</a></li>`;
+        });
+        $("#box ul").html(html);
+      }
+      function getDate() {
+        let date = new Date();
+        let month = date.getMonth() + 1;
+        let day = date.getDate();
+        return `${month}-${day}`;
+      }
+    </script>
+  </body>
+</html>
