@@ -1,0 +1,278 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>茶叶增删改查</title>
+</head>
+
+<body>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+        }
+
+        #box {
+            margin-top: 20px;
+        }
+
+        table {
+            width: 1200px;
+            border-collapse: collapse;
+            text-align: center;
+            margin: 20px auto;
+        }
+
+        /*  */
+        th {
+            background-color: #2486b9;
+            color: white;
+            border: 1px solid white;
+            height: 50px;
+        }
+
+        table,
+        td {
+            border: 1px solid #7a7374;
+            height: 50px;
+        }
+
+        #addbox {
+            width: 1200px;
+            height: 50px;
+            margin: auto;
+        }
+
+        #addbtn {
+            width: 70px;
+            height: 35px;
+        }
+
+        .addbox1,
+        .modify {
+            padding: 15px 0;
+            width: 400px;
+            text-align: center;
+            height: 380px;
+            display: none;
+            position: absolute;
+            top: 80px;
+            left: 40%;
+            background-color: white;
+        }
+
+        /*  */
+        button {
+            width: 60px;
+            height: 30px;
+            border: none;
+            background-color: #2486b9;
+            color: white;
+            border-radius: 5px;
+        }
+
+        h3 {
+            margin-bottom: 20px;
+        }
+    </style>
+    </head>
+
+    <body>
+        <div id="box">
+            <!-- 添加框 -->
+            <div class="addbox1">
+                <h3>添加茶叶</h3>
+                茶叶名称：<input type="text" id="name" /><br /><br />
+                茶叶类型：<input type="text" id="type" /><br /><br />
+                茶叶价格：<input type="text" id="price" /><br /><br />
+                茶叶库存：<input type="text" id="stock" /><br /><br />
+                茶叶描述：<input type="text" id="description" /><br /><br />
+                <button id="cell">取消</button> &emsp;
+                <button id="save">保存</button>
+            </div>
+
+            <!-- 修改框 -->
+            <div class="modify">
+                <h3>修改歌曲---<b id="b"></b></h3>
+                茶叶名称：<input type="text" id="name-edit" /><br /><br />
+                茶叶类型：<input type="text" id="type-edit" /><br /><br />
+                茶叶价格：<input type="text" id="price-edit" /><br /><br />
+                茶叶库存：<input type="text" id="stock-edit" /><br /><br />
+                茶叶描述：<input type="text" id="description-edit" /><br /><br />
+                <button id="cell1">取消</button> &emsp;
+                <button id="save1">确定</button>
+            </div>
+            <div id="addbox">
+                <button id="addbtn">添加</button>
+            </div>
+            <table>
+                <thead>
+                    <tr>
+                        <th>ID</th>
+                        <th>茶叶名称</th>
+                        <th>茶叶类型</th>
+                        <th>茶叶价格</th>
+                        <th>茶叶库存</th>
+                        <th>茶叶描述</th>
+                        <th>创建时间</th>
+                        <th>更新时间</th>
+                        <th>操作</th>
+                    </tr>
+                </thead>
+                <tbody></tbody>
+            </table>
+        </div>
+        <script src="../jquery-3.7.1.js"></script>
+        <script>
+            let an = null
+            $(function () {
+                renderlist()
+                //添加
+                $("#addbtn").click(addfun)
+                //隐藏
+                $("#cell").click(cellfun)
+                $("#cell1").click(cell1fun)
+                //保存
+                $("#save").click(savefun)
+                //删除编辑
+                $("tbody").click(tbodyfun)
+                // //修改保存
+                $("#save1").click(save1fun)
+            })
+
+            //删除编辑
+            function tbodyfun() {
+                let btn = event.target;
+                // let id = event.target.dataset.id;
+                if (btn.tagName == "BUTTON" && btn.innerHTML == "删除") {
+                    let delid = $(event.target).data('id')
+                    $.ajax({
+                        url: "https://liu.zzgoodqc.cn/teas/" + delid,
+                        type: 'delete',
+                        dataType: 'json',
+                        contentType: 'application/json',
+                        success: function (data) {
+                            renderlist()
+                        }
+                    })
+                }
+                if (btn.tagName == "BUTTON" && btn.innerHTML == "编辑") {
+                    console.log(111);
+                    $(".modify").css('display', 'block');
+                    an = $(event.target).data('id')
+                    getID = event.target.dataset.id;
+                    $.ajax({
+                        url: 'https://liu.zzgoodqc.cn/teas/' + getID,
+                        type: 'get',
+                        dataType: 'json',
+                        success: function (data) {
+
+                            $("#name-edit").val(data.data.name);
+                            $("#type-edit").val(data.data.type);
+                            $("#price-edit").val(data.data.price);
+                            $("#stock-edit").val(data.data.stock);
+                            $("#description-edit").val(data.data.description);
+                            renderlist()
+                        }
+                    })
+                }
+            }
+
+            //保存修改
+            function save1fun() {
+                console.log(an);
+                let teas = {
+                    name: $("#name-edit").val(),
+                    type: $("#type-edit").val(),
+                    price: $("#price-edit").val(),
+                    stock: $("#stock-edit").val(),
+                    description: $("#description-edit").val(),
+                };
+                console.log(teas);
+                $.ajax({
+                    url: `https://liu.zzgoodqc.cn/teas/${an}`,
+                    type: 'put',
+                    dataType: 'json',
+                    data: teas,
+                    success: function (data) {
+                        console.log(data);
+                        renderlist()
+                        $(".modify").css('display', 'none');
+                    }
+                })
+            }
+
+            //隐藏
+            function cellfun() {
+                $(".addbox1").css('display', 'none')
+            }
+            function cell1fun() {
+                $(".modify").css('display', 'none')
+            }
+
+            //添加保存
+            function savefun() {
+                let obj = {
+                    name: $("#name").val(),
+                    type: $("#type").val(),
+                    price: $("#price").val(),
+                    stock: $("#stock").val(),
+                    description: $("#description").val(),
+                };
+                console.log(obj);
+                $.ajax({
+                    url: 'https://liu.zzgoodqc.cn/teas',
+                    type: "POST",
+                    // dataType: 'json',
+                    data: obj,
+                    success: function (data) {
+                        renderlist()
+                        $(".addbox1").css('display', 'none')
+                    }
+                })
+
+            }
+
+            //添加
+            function addfun() {
+                $(".addbox1").css('display', 'block')
+            }
+
+
+            //渲染
+            function renderlist() {
+                $.ajax({
+                    type: "get",
+                    url: 'https://liu.zzgoodqc.cn/teas',
+                    dataType: 'json',
+                    success: function (data) {
+                        var res = data;
+                        let html = ``
+                        res.data.forEach((item, index) => {
+                            html += `  <tr>
+                          <td datas-index=${index}>${item.id}</td>
+                          <td>${item.name}</td>
+                          <td>${item.type}</td>
+                          <td>${item.price}</td>
+                          <td>${item.stock}</td>
+                          <td>${item.description}</td>
+                          <td>${item.created_at}</td>
+                          <td>${item.updated_at}</td>
+                          <td>
+                             <button  data-id=${item.id}>删除</button>&emsp;
+                             <button  data-id=${item.id}>编辑</button>
+                          </td>
+                       </tr> `
+                        })
+                        $("tbody").html(html)
+                    }
+                })
+            }
+
+
+        </script>
+    </body>
+
+</html>
