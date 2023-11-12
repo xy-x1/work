@@ -76,6 +76,10 @@
         h3 {
             margin-bottom: 20px;
         }
+
+        #search {
+            height: 20px;
+        }
     </style>
     </head>
 
@@ -105,7 +109,9 @@
                 <button id="save1">确定</button>
             </div>
             <div id="addbox">
-                <button id="addbtn">添加</button>
+                <button id="addbtn">添加</button>&emsp;
+                <input type="text" placeholder="搜索" id="search" />
+                <button id="sear">搜索</button>&emsp;
             </div>
             <table>
                 <thead>
@@ -141,6 +147,10 @@
                 // //修改保存
                 $("#save1").click(save1fun)
             })
+
+            $("#sear").click(function () {
+                renderlist();
+            });
 
             //删除编辑
             function tbodyfun() {
@@ -250,8 +260,10 @@
                     success: function (data) {
                         var res = data;
                         let html = ``
+                        let searchStr = $("#search").val().trim();
                         res.data.forEach((item, index) => {
-                            html += `  <tr>
+                            if (searchStr === "" || item.name.includes(searchStr)) {
+                                html += `  <tr>
                           <td datas-index=${index}>${item.id}</td>
                           <td>${item.name}</td>
                           <td>${item.type}</td>
@@ -265,6 +277,8 @@
                              <button  data-id=${item.id}>编辑</button>
                           </td>
                        </tr> `
+                            }
+
                         })
                         $("tbody").html(html)
                     }
